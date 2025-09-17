@@ -59,7 +59,7 @@ def save_in_other_micro():
         "valor": data.get("valor", 0)
     }
     try:
-        response = requests.post("http://microservice-2:5000/call-for-other-micro", json=item, timeout=5)
+        response = requests.post("http://ddd-service-discovery.ddd:5000/call-for-other-micro", json=item, timeout=5)
         return jsonify(status="forwarded", response=response.json()), response.status_code
     except Exception as e:
         return jsonify(error=str(e)), 500
