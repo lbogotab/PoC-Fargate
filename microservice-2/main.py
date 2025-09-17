@@ -2,7 +2,7 @@ import os
 import uuid
 import json
 import boto3
-from flask import Flask
+from flask import Flask, request, jsonify
 from pulsar import Client, ConsumerType
 
 app = Flask(__name__)
@@ -40,6 +40,22 @@ def listen_and_store():
         except Exception as e:
             consumer.negative_acknowledge(msg)
             print(f"Error processing message: {e}")
+
+@app.route("/call-for-other-micro", methods=["POST"])
+def call_for_other_micro():
+    data = request.get_json()
+    item_id = str(uuid.uuid4())
+    item = {
+        "id": item_id,
+        "nombre": data.get("nombre", "unknown"),
+        "valor": data.get("valor", 0),
+        "status": "guardado por microservicio 2"
+    }
+    try:
+        table.put_item(Item=item)
+        return jsonify(id=item_id, status="saved by microservice 2"), 200
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 if __name__ == "__main__":
     from threading import Thread

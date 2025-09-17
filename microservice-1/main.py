@@ -5,6 +5,7 @@ app = Flask(__name__)
 import boto3
 import uuid
 import os
+import requests
 from flask import request
 
 # Nombre de la tabla DynamoDB, se puede setear por variable de entorno
@@ -48,6 +49,20 @@ def health_check():
 @app.route("/example", methods=["GET"])
 def example():
     return jsonify(message="ejemplo de servicio en Flask"), 200
+
+@app.route("/save-in-other-micro", methods=["POST"])
+def save_in_other_micro():
+    data = request.get_json()
+    item = {
+        "id": str(uuid.uuid4()),
+        "nombre": data.get("nombre", "N/A"),
+        "valor": data.get("valor", 0)
+    }
+    try:
+        response = requests.post("http://microservice-2:5000/call-for-other-micro", json=item, timeout=5)
+        return jsonify(status="forwarded", response=response.json()), response.status_code
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
