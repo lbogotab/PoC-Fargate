@@ -24,6 +24,7 @@ def listen_and_store():
     consumer = client.subscribe(TOPIC_NAME, subscription_name="microservice-2-sub", consumer_type=ConsumerType.Shared)
     while True:
         msg = consumer.receive()
+        print(f"Received message: {msg.data()}")
         try:
             data = json.loads(msg.data())
             item_id = str(uuid.uuid4())
