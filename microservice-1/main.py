@@ -30,7 +30,7 @@ def save_item():
         # Publicar mensaje en Pulsar
         try:
             import pulsar
-            pulsar_client = pulsar.Client('pulsar://34.228.53.181:6650')
+            pulsar_client = pulsar.Client('pulsar://52.91.12.250:6650')
             producer = pulsar_client.create_producer('persistent://public/default/ddd-items')
             import json
             producer.send(json.dumps(item).encode('utf-8'))

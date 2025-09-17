@@ -11,7 +11,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 table_name = os.getenv("DYNAMODB_TABLE", "ddd")
 table = dynamodb.Table(table_name)
 
-PULSAR_SERVICE_URL = os.getenv("PULSAR_URL", "pulsar://34.228.53.181:6650")
+PULSAR_SERVICE_URL = os.getenv("PULSAR_URL", "pulsar://52.91.12.250:6650")
 TOPIC_NAME = os.getenv("PULSAR_TOPIC", "persistent://public/default/ddd-items")
 
 client = Client(PULSAR_SERVICE_URL)
