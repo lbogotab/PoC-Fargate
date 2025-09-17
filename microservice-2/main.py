@@ -3,7 +3,7 @@ import uuid
 import json
 import boto3
 from flask import Flask
-from pulsar import Client
+from pulsar import Client, ConsumerType
 
 app = Flask(__name__)
 
@@ -21,7 +21,7 @@ def health():
     return "OK", 200
 
 def listen_and_store():
-    consumer = client.subscribe(TOPIC_NAME, subscription_name="microservice-2-sub", consumer_type="Shared")
+    consumer = client.subscribe(TOPIC_NAME, subscription_name="microservice-2-sub", consumer_type=ConsumerType.Shared)
     while True:
         msg = consumer.receive()
         try:
@@ -29,8 +29,8 @@ def listen_and_store():
             item_id = str(uuid.uuid4())
             item = {
                 "id": item_id,
-                "name": data.get("name", "unknown"),
-                "price": data.get("price", 0),
+                "nombre": data.get("nombre", "unknown"),
+                "valor": data.get("valor", 0),
                 "status": "procesado por pulsar"
             }
             table.put_item(Item=item)
