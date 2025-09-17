@@ -1,32 +1,44 @@
 {
-  "family": "ddd-1-task",
+  "family": "pulsar-standalone-task",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
-  "cpu": "256",
-  "memory": "512",
+  "cpu": "1024",
+  "memory": "3072",
   "executionRoleArn": "arn:aws:iam::726264870413:role/ecsTaskExecutionRole",
   "taskRoleArn": "arn:aws:iam::726264870413:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
-      "name": "microservice-1",
-      "image": "726264870413.dkr.ecr.us-east-1.amazonaws.com/ddd-1:latest",
+      "name": "pulsar",
+      "image": "apachepulsar/pulsar:latest",
+      "essential": true,
       "portMappings": [
         {
-          "containerPort": 5000,
+          "containerPort": 6650,
+          "protocol": "tcp"
+        },
+        {
+          "containerPort": 8080,
           "protocol": "tcp"
         }
       ],
-      "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/ddd-1-task",
+          "awslogs-group": "/ecs/pulsar-standalone",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
       },
+      "command": [
+        "bash",
+        "-c",
+        "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar standalone"
+      ],
       "healthCheck": {
-        "command": ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"],
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:8080/admin/v2/brokers/cluster/default || exit 1"
+        ],
         "interval": 30,
         "timeout": 5,
         "retries": 3,

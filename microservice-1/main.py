@@ -27,6 +27,15 @@ def save_item():
 
     try:
         table.put_item(Item=item)
+        # Publicar mensaje en Pulsar
+        try:
+            import pulsar
+            pulsar_client = pulsar.Client('pulsar://34.228.53.181:6650')
+            producer = pulsar_client.create_producer('persistent://public/default/ddd-items')
+            producer.send(str(item).encode('utf-8'))
+            pulsar_client.close()
+        except Exception as pulsar_error:
+            print(f"Error enviando a Pulsar: {pulsar_error}")
         return jsonify(id=item_id, status="saved"), 200
     except Exception as e:
         return jsonify(error=str(e)), 500
