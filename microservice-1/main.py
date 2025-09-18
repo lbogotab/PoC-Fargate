@@ -6,8 +6,7 @@ import boto3
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from models import Item, Base
+from models import Base
 
 app = Flask(__name__)
 
